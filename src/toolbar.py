@@ -28,8 +28,7 @@ def resize_image(image, max_width, max_height):
 
 def create_image_button(img_path, toolbar, command=None):
     image = Image.open(img_path).convert("RGBA")
-    image = resize_image(image, 100, 100)
-    # image.thumbnail((100, 100))
+    image = resize_image(image, config.toolbar_size, config.toolbar_size)
     photo = ImageTk.PhotoImage(image)
     cmd = command if command is not None else lambda *args: None
 
