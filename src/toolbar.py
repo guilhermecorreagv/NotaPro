@@ -2,6 +2,7 @@ import tkinter as tk
 from PIL import Image, ImageTk
 import os
 import config
+from . import widgets
 
 def resize_image(image, max_width, max_height):
     # Calculate the scaling factor
@@ -26,7 +27,7 @@ def resize_image(image, max_width, max_height):
     return new_image
 
 
-def create_image_button(img_path, toolbar, command=None):
+def create_image_button(img_path, toolbar, command=None, hoover_text=''):
     image = Image.open(img_path).convert("RGBA")
     image = resize_image(image, config.toolbar_size, config.toolbar_size)
     photo = ImageTk.PhotoImage(image)
@@ -34,6 +35,9 @@ def create_image_button(img_path, toolbar, command=None):
 
     button = tk.Button(toolbar, image=photo, command=cmd)
     button.image = photo
+    if len(hoover_text) > 0:
+        button = widgets.add_hoover_text(button, config.window, hoover_text)
+
     return button
 
 def add_toolbar():
@@ -44,10 +48,10 @@ def add_toolbar():
     toolbar = tk.Frame(window, bd=1, relief=tk.RAISED)
 
     # Add buttons to the toolbar
-    people_button = create_image_button(os.path.join(cwd, 'assets', 'couple-icon.png'), toolbar)
-    cart_button = create_image_button(os.path.join(cwd, 'assets', 'cart-black-icon.png'), toolbar)
-    pen_button = create_image_button(os.path.join(cwd, 'assets', 'edit-pen-icon.png'), toolbar)
-    download_button = create_image_button(os.path.join(cwd, 'assets', 'round-black-bottom-arrow-icon.png'), toolbar)
+    people_button = create_image_button(os.path.join(cwd, 'assets', 'couple-icon.png'), toolbar, hoover_text="Clientes")
+    cart_button = create_image_button(os.path.join(cwd, 'assets', 'cart-black-icon.png'), toolbar, hoover_text="Compras")
+    pen_button = create_image_button(os.path.join(cwd, 'assets', 'edit-pen-icon.png'), toolbar, hoover_text="Editar")
+    download_button = create_image_button(os.path.join(cwd, 'assets', 'round-black-bottom-arrow-icon.png'), toolbar, hoover_text="Download")
     export_button = create_image_button(os.path.join(cwd, 'assets', 'document-export-icon.png'), toolbar)
     money_button = create_image_button(os.path.join(cwd, 'assets', 'money-bag-icon.png'), toolbar)
 

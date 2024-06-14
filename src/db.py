@@ -17,7 +17,7 @@ def setup_database():
     cur.execute("""
         CREATE TABLE IF NOT EXISTS Products(
             ProductID INTEGER PRIMARY KEY AUTOINCREMENT,
-            Name VARCHAR(255) NOT NULL,
+            Name TEXT NOT NULL,
             Description TEXT, 
             Stock INTEGER DEFAULT 0,
             Price INTEGER

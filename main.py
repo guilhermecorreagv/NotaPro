@@ -1,10 +1,9 @@
 import tkinter as tk
 from src.menu import add_menu
 from src.toolbar import add_toolbar
-from src.db import connect_database
+from src.db import connect_database, setup_database
 import os
 import config
-
 
 
 if __name__ == '__main__':
@@ -15,6 +14,7 @@ if __name__ == '__main__':
     config.CWD = os.getcwd()
 
     connect_database()
+    # setup_database()
 
     add_menu()
     add_toolbar()

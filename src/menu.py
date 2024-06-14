@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 import config 
 
 # Function to fetch data from the database
@@ -33,48 +33,6 @@ def change_page(tree, page, page_size, total_records, label):
     label.config(text=f"Page {page} of {max_page}")
     return page
 
-def add_inventory():
-    sub_window = tk.Toplevel(config.window)
-    sub_window.title("Adicionar Estoque")
-
-    # @TODO: See if this fixed size window is a good idea
-    sub_window.geometry("800x600")
-
-        # Add widgets for CRUD operations
-    lbl = tk.Label(sub_window, text="CRUD Operations", font=("Helvetica", 16))
-    lbl.pack(pady=10)
-
-    # Add Entry widget for data input
-    entry = tk.Entry(sub_window)
-    entry.pack(pady=10)
-
-    # Add buttons for Create, Read, Update, Delete
-    def create():
-        data = entry.get()
-        print(f"Create: {data}")
-
-    def read():
-        print("Read operation")
-
-    def update():
-        data = entry.get()
-        print(f"Update: {data}")
-
-    def delete():
-        print("Delete operation")
-
-    btn_create = tk.Button(sub_window, text="Create", command=create)
-    btn_create.pack(pady=5)
-
-    btn_read = tk.Button(sub_window, text="Read", command=read)
-    btn_read.pack(pady=5)
-
-    btn_update = tk.Button(sub_window, text="Update", command=update)
-    btn_update.pack(pady=5)
-
-    btn_delete = tk.Button(sub_window, text="Delete", command=delete)
-    btn_delete.pack(pady=5)
-
 def consult_inventory():
     sub_window = tk.Toplevel(config.window)
     sub_window.title("Consultar Estoque")
@@ -84,7 +42,7 @@ def consult_inventory():
     current_page = 1
 
     # Create the Treeview widget
-    columns = ("ProductID", "Name", "Description", "Stock")
+    columns = ("ID", "Nome", "Descrição", "Quantidade")
     tree = ttk.Treeview(sub_window, columns=columns, show="headings")
     for col in columns:
         tree.heading(col, text=col)
@@ -115,6 +73,57 @@ def consult_inventory():
     # Initialize the table with the first page of data
     total_records = update_table(tree, current_page, page_size)
     change_page(tree, current_page, page_size, total_records, pagination_label)
+
+def add_inventory():
+
+    def to_uppercase(event):
+        widget = event.widget
+        text = widget.get()
+        widget.delete(0, tk.END)
+        widget.insert(0, text.upper())
+
+
+    sub_window = tk.Toplevel(config.window)
+    sub_window.title("Adicionar Estoque")
+
+    # add labels for user input
+    tk.Label(sub_window, text="Nome do produto:").grid(row=0, column=0, padx=10, pady=10)
+    name_entry = tk.Entry(sub_window)
+    name_entry.grid(row=0, column=1, padx=10, pady=10)
+    name_entry.bind("<KeyRelease>", to_uppercase)
+
+    tk.Label(sub_window, text="Descrição (opcional):").grid(row=1, column=0, padx=10, pady=10)
+    description_entry = tk.Entry(sub_window)
+    description_entry.grid(row=1, column=1, padx=10, pady=10)
+
+    tk.Label(sub_window, text="Quantidade:").grid(row=2, column=0, padx=10, pady=10)
+    amount_entry = tk.Entry(sub_window)
+    amount_entry.grid(row=2, column=1, padx=10, pady=10)
+
+    tk.Label(sub_window, text="Preço:").grid(row=3, column=0, padx=10, pady=10)
+    price_entry = tk.Entry(sub_window)
+    price_entry.grid(row=3, column=1, padx=10, pady=10)
+
+    def submit():
+        name = name_entry.get().strip()
+        description = description_entry.get().strip()
+        amount = int(amount_entry.get().strip())
+        price = float(price_entry.get().strip())
+
+        if not name or not amount or not price:  # Check if mandatory fields are filled
+            messagebox.showerror("Error", "Falta preencher campos obrigatórios")
+            return
+
+        cursor = config.db_connection.cursor()
+        cursor.execute("INSERT INTO Products (Name, Description, Stock, Price) VALUES (?, ?, ?, ?)", (name, description, amount, round(price*100)))
+        config.db_connection.commit()
+        # Here you would add the code to insert the data into the database
+        messagebox.showinfo("Success", "Produto adicionado com sucesso!")
+        sub_window.destroy()
+
+    submit_button = tk.Button(sub_window, text="Adicionar", command=submit)
+    submit_button.grid(row=4, column=0, columnspan=2, pady=20)
+
 
 
 def add_menu():
