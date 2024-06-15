@@ -14,7 +14,7 @@ if __name__ == '__main__':
     config.CWD = os.getcwd()
 
     connect_database()
-    # setup_database()
+    setup_database()
 
     add_menu()
     add_toolbar()
